@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from encryptionclasses import CaesarCypher, VernamCypher
 
-def create_gui(submit_callback):
+def create_gui(submit_callback, freq_analysis_callback):
     root = tk.Tk()
     root.title('Encryption Program')
     root.geometry("600x400")
@@ -24,6 +23,12 @@ def create_gui(submit_callback):
     shift_label = ttk.Label(root, text="Shift (for Caesar):")
     shift_entry = ttk.Entry(root)
 
+    result_label = ttk.Label(root, text="Result:")
+    result_label.pack(anchor=tk.W, padx=10, pady=5)
+
+    def local_submit_callback(cipher_type, plaintext, key, shift):
+        submit_callback(cipher_type, plaintext, key, shift, result_label)
+
     def update_fields(*args):
         cipher_type = cipher_var.get()
         if cipher_type == "Caesar":
@@ -36,30 +41,19 @@ def create_gui(submit_callback):
             key_entry.pack(anchor=tk.W, padx=10, pady=5)
             shift_label.pack_forget()
             shift_entry.pack_forget()
+        local_submit_callback(cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get())
 
     cipher_var.trace("w", update_fields)
+    plaintext_entry.bind("<KeyRelease>", lambda event: local_submit_callback(cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
+    key_entry.bind("<KeyRelease>", lambda event: local_submit_callback(cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
+    shift_entry.bind("<KeyRelease>", lambda event: local_submit_callback(cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
+
     update_fields()  # Initialize the fields based on the default cipher
 
-    submit_button = ttk.Button(root, text="Submit", command=lambda: submit_callback(cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
+    submit_button = ttk.Button(root, text="Submit", command=lambda: local_submit_callback(cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
     submit_button.pack(anchor=tk.W, padx=10, pady=5)
 
-    result_label = ttk.Label(root, text="Result:")
-    result_label.pack(anchor=tk.W, padx=10, pady=5)
+    freq_analysis_button = ttk.Button(root, text="Frequency Analysis", command=lambda: freq_analysis_callback(plaintext_entry.get()))
+    freq_analysis_button.pack(anchor=tk.W, padx=10, pady=5)
 
     return root, result_label
-
-def submit(cipher_type, plaintext, key, shift):
-    result = ""
-    
-    if cipher_type == "Caesar":
-        shift = int(shift)
-        caesar = CaesarCypher(shift, plaintext, "")
-        result = caesar.Encrypt()
-    elif cipher_type == "Vernam":
-        vernam = VernamCypher(key, plaintext, "")
-        result = vernam.Encrypt()
-    
-    result_label.config(text=f"Result: {result}")
-
-root, result_label = create_gui(submit)
-root.mainloop()
