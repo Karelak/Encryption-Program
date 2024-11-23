@@ -2,7 +2,7 @@ from encryptionclasses import CaesarCypher, VernamCypher
 from application import create_gui
 from frequency_analysis import frequency_analysis
 
-def submit_callback(operation, cipher_type, plaintext, key, shift, result_label):
+def submit_callback(operation, cipher_type, plaintext, key, shift):
     result = ""
     if cipher_type == "Caesar":
         try:
@@ -21,7 +21,7 @@ def submit_callback(operation, cipher_type, plaintext, key, shift, result_label)
         else:
             result = vernam.Decrypt()
     
-    result_label.config(text=f"Result: {result}")
+    return result
 
 def freq_analysis_callback(text):
     frequency_analysis(text)

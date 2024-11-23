@@ -34,12 +34,16 @@ def create_gui(submit_callback, freq_analysis_callback):
     shift_label = ttk.Label(root, text="Shift (for Caesar):")
     shift_entry = ttk.Entry(root)
 
-    # Result Label
-    result_label = ttk.Label(root, text="Result:")
+    # Result Text Box
+    result_label = ttk.Entry(root, state='readonly')
     result_label.pack(anchor=tk.W, padx=10, pady=5)
 
     def local_submit_callback(operation, cipher_type, plaintext, key, shift):
-        submit_callback(operation, cipher_type, plaintext, key, shift, result_label)
+        result = submit_callback(operation, cipher_type, plaintext, key, shift)
+        result_label.config(state='normal')
+        result_label.delete(0, tk.END)
+        result_label.insert(0, result)
+        result_label.config(state='readonly')
 
     def update_fields(*args):
         cipher_type = cipher_var.get()
@@ -63,9 +67,6 @@ def create_gui(submit_callback, freq_analysis_callback):
     shift_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
 
     update_fields()  # Initialize the fields based on the default cipher
-
-    submit_button = ttk.Button(root, text="Submit", command=lambda: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
-    submit_button.pack(anchor=tk.W, padx=10, pady=5)
 
     freq_analysis_button = ttk.Button(root, text="Frequency Analysis", command=lambda: freq_analysis_callback(plaintext_entry.get()))
     freq_analysis_button.pack(anchor=tk.W, padx=10, pady=5)

@@ -33,12 +33,16 @@ class VernamCypher:
         self.input = input
 
     def Encrypt(self):
+        if len(self.key) == 0:
+            return "Key cannot be empty"
         encrypted_data = ''
         for i in range(len(self.input)):
             encrypted_data += chr(ord(self.input[i]) ^ ord(self.key[i % len(self.key)]))
         return encrypted_data
 
     def Decrypt(self):
+        if len(self.key) == 0:
+            return "Key cannot be empty"
         decrypted_data = ''
         for i in range(len(self.input)):
             decrypted_data += chr(ord(self.input[i]) ^ ord(self.key[i % len(self.key)]))
