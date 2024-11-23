@@ -1,3 +1,4 @@
+````markdown
 # Encryption Program (OOP and Tkinter)
 
 ## Overview
@@ -22,6 +23,8 @@ This project is an encryption program built using Object-Oriented Programming (O
    ```sh
    git clone https://github.com/yourusername/encryption-program.git
    ```
+````
+
 2. Navigate to the project directory:
    ```sh
    cd encryption-program
@@ -37,7 +40,7 @@ This project is an encryption program built using Object-Oriented Programming (O
 2. Select the encryption algorithm from the dropdown menu.
 3. Enter the message you want to encrypt or decrypt.
 4. Provide the necessary key or settings for the chosen algorithm.
-5. Click the "Encrypt" or "Decrypt" button to see the result.
+5. The result will be updated live as you type.
 
 ## Contributing
 
@@ -50,3 +53,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 ## Contact
 
 For any questions or suggestions, please contact [your email address].
+
+```
+
+```
