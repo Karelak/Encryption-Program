@@ -64,8 +64,8 @@ def create_gui(submit_callback, freq_analysis_callback):
         local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get())
 
     # Trace changes in cipher and operation selection
-    cipher_var.trace("w", update_fields)
-    operation_var.trace("w", update_fields)
+    cipher_var.trace_add("w", update_fields)
+    operation_var.trace_add("w", update_fields)
     plaintext_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
     key_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
     shift_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get(), key_entry.get(), shift_entry.get()))
