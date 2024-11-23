@@ -8,18 +8,19 @@ This project is an encryption program built using Object-Oriented Programming (O
 ## Features
 
 - **User-friendly GUI**: Built with Tkinter to provide an intuitive interface for users.
-- **Multiple Encryption Algorithms**: Supports different encryption methods such as Caesar Cipher, Vigenère Cipher, and more.
+- **Multiple Encryption Algorithms**: Supports different encryption methods such as Caesar Cipher and Vernam Cipher.
 - **Encryption and Decryption**: Users can easily switch between encrypting and decrypting messages.
-- **Customizable Settings**: Allows users to customize encryption settings such as keys and modes.
+- **Customizable Settings**: Allows users to customize encryption settings such as keys and shifts.
 
 ## Requirements
 
 - Python 3.x
 - Tkinter library (usually included with Python)
+- Matplotlib library
 
 ## Installation
 
-1. Clone the repository to your local machine:
+1. **Clone the repository to your local machine:**
    ```sh
    git clone https://github.com/yourusername/encryption-program.git
    ```
