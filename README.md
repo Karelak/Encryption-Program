@@ -1,4 +1,3 @@
-````markdown
 # Encryption Program (OOP and Tkinter)
 
 ## Overview
@@ -24,13 +23,11 @@ This project is an encryption program built using Object-Oriented Programming (O
    ```sh
    git clone https://github.com/yourusername/encryption-program.git
    ```
-````
-
-2. Navigate to the project directory:
+2. **Navigate to the project directory:**
    ```sh
    cd encryption-program
    ```
-3. Run the program:
+3. **Run the program:**
    ```sh
    python main.py
    ```
@@ -49,12 +46,8 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
+This project is licensed under the Apache License 2.0. See the `LICENSE` file for more details.
 
 ## Contact
 
 For any questions or suggestions, please contact [your email address].
-
-```
-
-```

@@ -2,6 +2,7 @@ from encryptionclasses import CaesarCypher, VernamCypher
 from application import create_gui
 from frequency_analysis import frequency_analysis
 
+# Callback function for submit button
 def submit_callback(operation, cipher_type, plaintext, key, shift):
     result = ""
     if cipher_type == "Caesar":
@@ -23,8 +24,10 @@ def submit_callback(operation, cipher_type, plaintext, key, shift):
     
     return result
 
+# Callback function for frequency analysis button
 def freq_analysis_callback(text):
     frequency_analysis(text)
 
+# Create the GUI and start the main loop
 root, result_label = create_gui(submit_callback, freq_analysis_callback)
 root.mainloop()

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from collections import Counter
 
+# Function to perform frequency analysis on the given text
 def frequency_analysis(text):
     # Count the frequency of each character in the text
     counter = Counter(text)

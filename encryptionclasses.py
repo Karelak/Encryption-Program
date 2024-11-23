@@ -3,6 +3,7 @@ class CaesarCypher:
         self.shift = shift
         self.input = input
 
+    # Method to encrypt the input using Caesar Cipher
     def Encrypt(self):
         encrypted_data = ''
         for char in self.input:
@@ -15,6 +16,7 @@ class CaesarCypher:
                 encrypted_data += char
         return encrypted_data
 
+    # Method to decrypt the input using Caesar Cipher
     def Decrypt(self):
         decrypted_data = ''
         for char in self.input:
@@ -32,6 +34,7 @@ class VernamCypher:
         self.key = key
         self.input = input
 
+    # Method to encrypt the input using Vernam Cipher
     def Encrypt(self):
         if len(self.key) == 0:
             return "Key cannot be empty"
@@ -40,6 +43,7 @@ class VernamCypher:
             encrypted_data += chr(ord(self.input[i]) ^ ord(self.key[i % len(self.key)]))
         return encrypted_data
 
+    # Method to decrypt the input using Vernam Cipher
     def Decrypt(self):
         if len(self.key) == 0:
             return "Key cannot be empty"
