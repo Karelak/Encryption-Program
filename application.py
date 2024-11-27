@@ -21,7 +21,7 @@ def create_gui(submit_callback, freq_analysis_callback):
     # Cipher Selection
     cipher_var = tk.StringVar(value="Caesar")
     cipher_label = ttk.Label(main_frame, text="Select Cipher:")
-    cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam"])
+    cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam", "Base64"])
     cipher_label.pack(anchor=tk.CENTER, padx=10, pady=5)
     cipher_menu.pack(anchor=tk.CENTER, padx=10, pady=5)
 

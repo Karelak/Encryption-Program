@@ -1,4 +1,4 @@
-from encryptionclasses import CaesarCypher, VernamCypher
+from encryptionclasses import CaesarCypher, VernamCypher, Base64Cypher
 from application import create_gui
 from frequency_analysis import frequency_analysis
 
@@ -21,6 +21,12 @@ def submit_callback(operation, cipher_type, plaintext, key, shift):
             result = vernam.Encrypt()
         else:
             result = vernam.Decrypt()
+    elif cipher_type == "Base64":
+        base64 = Base64Cypher(plaintext)
+        if operation == "Encrypt":
+            result = base64.Encrypt()
+        else:
+            result = base64.Decrypt()
     
     return result
 

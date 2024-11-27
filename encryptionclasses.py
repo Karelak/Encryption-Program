@@ -1,3 +1,5 @@
+import base64
+
 class CaesarCypher:
     def __init__(self, shift, input):
         self.shift = shift
@@ -52,3 +54,14 @@ class VernamCypher:
             decrypted_data += chr(ord(self.input[i]) ^ ord(self.key[i % len(self.key)]))
         return decrypted_data
 
+class Base64Cypher:
+    def __init__(self, input):
+        self.input = input
+    
+        # Method to encrypt the input using Base64 Cipher
+    def Encrypt(self):
+        return base64.b64encode(self.input.encode()).decode()
+    
+        # Method to decrypt the input using Base64 Cipher
+    def Decrypt(self):
+        return base64.b64decode(self.input.encode()).decode()
