@@ -51,3 +51,4 @@ class VernamCypher:
         for i in range(len(self.input)):
             decrypted_data += chr(ord(self.input[i]) ^ ord(self.key[i % len(self.key)]))
         return decrypted_data
+
