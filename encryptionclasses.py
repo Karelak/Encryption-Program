@@ -1,7 +1,7 @@
 import base64
 import logging
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Cipher import PKCS1_OAEP
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 

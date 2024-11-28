@@ -1,7 +1,8 @@
 import logging
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-from Crypto.PublicKey import RSA
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Cipher import PKCS1_OAEP
 
 class Application:
     """Class to create and manage the GUI for the Encryption Program."""
