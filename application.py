@@ -14,10 +14,10 @@ class Application:
         self.create_gui()
 
     def setup_logging(self):
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     def create_gui(self):
-        logging.debug("Initializing GUI")
+        logging.info("Initializing GUI")
         self.root.title('Encryption Program')
         self.root.geometry("600x400")
 
@@ -61,23 +61,23 @@ class Application:
         self.result_label = tk.Text(main_frame, wrap=tk.WORD, height=4, state='disabled')
         self.result_label.grid(row=6, column=0, columnspan=2, padx=10, pady=5, sticky="nsew")
 
-        def local_submit_callback(operation, cipher_type, plaintext, key, shift):
+        def local_submit_callback(operation: str, cipher_type: str, plaintext: str, key: str, shift: str):
             if cipher_type == "Vernam" and not key:
                 result = "Key cannot be empty for Vernam Cipher"
                 logging.error(result)
             else:
-                logging.debug(f"Local submit callback: Operation: {operation}, Cipher: {cipher_type}, Plaintext: {plaintext}, Key: {key}, Shift: {shift}")
+                logging.info(f"Processing {operation} with {cipher_type} Cipher")
                 result = self.submit_callback(operation, cipher_type, plaintext, key, shift)
             self.result_label.config(state='normal')
             self.result_label.delete(1.0, tk.END)
             self.result_label.insert(tk.END, result)
             self.result_label.config(state='disabled')
-            logging.debug(f"Result updated: {result}")
+            logging.info(f"Result updated: {result}")
 
         def update_fields(*args):
             cipher_type = cipher_var.get()
             operation = operation_var.get()
-            logging.debug(f"Updating fields: Cipher: {cipher_type}, Operation: {operation}")
+            logging.info(f"Updating fields for {cipher_type} Cipher and {operation} operation")
             if cipher_type == "Caesar":
                 shift_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
                 shift_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
@@ -132,17 +132,17 @@ class Application:
         encryption_info_button = ttk.Button(main_frame, text="Encryption Info", command=self.show_encryption_info)
         encryption_info_button.grid(row=7, column=1, padx=10, pady=5, sticky=tk.W)
 
-        logging.debug("GUI initialized")
+        logging.info("GUI initialized")
 
-    def browse_file(self, entry):
+    def browse_file(self, entry: ttk.Entry):
         file_path = filedialog.askopenfilename(filetypes=[("PEM files", "*.pem"), ("All files", "*.*")])
         if file_path:
             entry.delete(0, tk.END)
             entry.insert(0, file_path)
-        logging.debug(f"File selected: {file_path}")
+        logging.info(f"File selected: {file_path}")
 
     def generate_rsa_key(self):
-        logging.debug("Generating RSA key")
+        logging.info("Generating RSA key")
         key = RSA.generate(2048)
         private_key = key.export_key()
         public_key = key.publickey().export_key()
@@ -151,10 +151,10 @@ class Application:
         with open("public_key.pem", "wb") as pub_file:
             pub_file.write(public_key)
         messagebox.showinfo("RSA Key Generation", "RSA keys generated and saved as 'private_key.pem' and 'public_key.pem'.")
-        logging.debug("RSA keys generated and saved")
+        logging.info("RSA keys generated and saved")
 
     def show_encryption_info(self):
-        logging.debug("Encryption info button clicked")
+        logging.info("Encryption info button clicked")
         info_text = self.encryption_info_callback()
         info_window = tk.Toplevel(self.root)
         info_window.title("Encryption Info")
@@ -163,4 +163,5 @@ class Application:
         info_label.pack(padx=10, pady=10)
 
     def run(self):
+        logging.info("Running application")
         self.root.mainloop()
