@@ -3,61 +3,145 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from Crypto.PublicKey import RSA
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+class Application:
+    def __init__(self, submit_callback, freq_analysis_callback, encryption_info_callback):
+        self.submit_callback = submit_callback
+        self.freq_analysis_callback = freq_analysis_callback
+        self.encryption_info_callback = encryption_info_callback
+        self.root = tk.Tk()
+        self.result_label = None
+        self.setup_logging()
+        self.create_gui()
 
-# Function to create the GUI
-def create_gui(submit_callback, freq_analysis_callback, encryption_info_callback):
-    logging.debug("Initializing GUI")
-    root = tk.Tk()
-    root.title('Encryption Program')  # Set the window title
-    root.geometry("600x400")  # Set the window size
+    def setup_logging(self):
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    # Create a frame to center the content
-    main_frame = ttk.Frame(root)
-    main_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")  # Use grid layout
+    def create_gui(self):
+        logging.debug("Initializing GUI")
+        self.root.title('Encryption Program')
+        self.root.geometry("600x400")
 
-    # Configure grid to expand
-    root.grid_rowconfigure(0, weight=1)
-    root.grid_columnconfigure(0, weight=1)
-    main_frame.grid_rowconfigure(2, weight=1)
-    main_frame.grid_columnconfigure(1, weight=1)
+        main_frame = ttk.Frame(self.root)
+        main_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
-    # Operation Selection
-    operation_var = tk.StringVar(value="Encrypt")  # Variable to store selected operation
-    operation_label = ttk.Label(main_frame, text="Select Operation:")  # Label for operation selection
-    operation_menu = ttk.Combobox(main_frame, textvariable=operation_var, values=["Encrypt", "Decrypt"])  # Dropdown menu for operation selection
-    operation_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)  # Grid layout for label
-    operation_menu.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)  # Grid layout for dropdown menu
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+        main_frame.grid_rowconfigure(2, weight=1)
+        main_frame.grid_columnconfigure(1, weight=1)
 
-    # Cipher Selection
-    cipher_var = tk.StringVar(value="Caesar")  # Variable to store selected cipher
-    cipher_label = ttk.Label(main_frame, text="Select Cipher:")  # Label for cipher selection
-    cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam", "Base64", "RSA"])  # Dropdown menu for cipher selection
-    cipher_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)  # Grid layout for label
-    cipher_menu.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)  # Grid layout for dropdown menu
+        operation_var = tk.StringVar(value="Encrypt")
+        operation_label = ttk.Label(main_frame, text="Select Operation:")
+        operation_menu = ttk.Combobox(main_frame, textvariable=operation_var, values=["Encrypt", "Decrypt"])
+        operation_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
+        operation_menu.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)
 
-    # Plaintext Entry
-    plaintext_label = ttk.Label(main_frame, text="Plaintext:")  # Label for plaintext entry
-    plaintext_entry = tk.Text(main_frame, wrap=tk.WORD, height=4)  # Text widget for plaintext
-    plaintext_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)  # Grid layout for label
-    plaintext_entry.grid(row=2, column=1, padx=10, pady=5, sticky="nsew")  # Grid layout for text widget
+        cipher_var = tk.StringVar(value="Caesar")
+        cipher_label = ttk.Label(main_frame, text="Select Cipher:")
+        cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam", "Base64", "RSA"])
+        cipher_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
+        cipher_menu.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
 
-    # Key Entry (Vernam)
-    key_label = ttk.Label(main_frame, text="Key (for Vernam):")  # Label for key entry
-    key_entry = ttk.Entry(main_frame)  # Entry widget for key
+        plaintext_label = ttk.Label(main_frame, text="Plaintext:")
+        plaintext_entry = tk.Text(main_frame, wrap=tk.WORD, height=4)
+        plaintext_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
+        plaintext_entry.grid(row=2, column=1, padx=10, pady=5, sticky="nsew")
 
-    # Shift Entry (Caesar)
-    shift_label = ttk.Label(main_frame, text="Shift (for Caesar):")  # Label for shift entry
-    shift_entry = ttk.Entry(main_frame)  # Entry widget for shift
+        key_label = ttk.Label(main_frame, text="Key (for Vernam):")
+        key_entry = ttk.Entry(main_frame)
 
-    # RSA Key File Selector
-    rsa_key_label = ttk.Label(main_frame, text="RSA Key File:")  # Label for RSA key file
-    rsa_key_entry = ttk.Entry(main_frame)  # Entry widget for RSA key file
-    rsa_key_button = ttk.Button(main_frame, text="Browse", command=lambda: browse_file(rsa_key_entry))  # Button to browse for RSA key file
+        shift_label = ttk.Label(main_frame, text="Shift (for Caesar):")
+        shift_entry = ttk.Entry(main_frame)
 
-    # Function to generate RSA key and save to file
-    def generate_rsa_key():
+        rsa_key_label = ttk.Label(main_frame, text="RSA Key File:")
+        rsa_key_entry = ttk.Entry(main_frame)
+        rsa_key_button = ttk.Button(main_frame, text="Browse", command=lambda: self.browse_file(rsa_key_entry))
+
+        rsa_generate_button = ttk.Button(main_frame, text="Generate Key", command=self.generate_rsa_key)
+
+        self.result_label = tk.Text(main_frame, wrap=tk.WORD, height=4, state='disabled')
+        self.result_label.grid(row=6, column=0, columnspan=2, padx=10, pady=5, sticky="nsew")
+
+        def local_submit_callback(operation, cipher_type, plaintext, key, shift):
+            if cipher_type == "Vernam" and not key:
+                result = "Key cannot be empty for Vernam Cipher"
+                logging.error(result)
+            else:
+                logging.debug(f"Local submit callback: Operation: {operation}, Cipher: {cipher_type}, Plaintext: {plaintext}, Key: {key}, Shift: {shift}")
+                result = self.submit_callback(operation, cipher_type, plaintext, key, shift)
+            self.result_label.config(state='normal')
+            self.result_label.delete(1.0, tk.END)
+            self.result_label.insert(tk.END, result)
+            self.result_label.config(state='disabled')
+            logging.debug(f"Result updated: {result}")
+
+        def update_fields(*args):
+            cipher_type = cipher_var.get()
+            operation = operation_var.get()
+            logging.debug(f"Updating fields: Cipher: {cipher_type}, Operation: {operation}")
+            if cipher_type == "Caesar":
+                shift_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
+                shift_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
+                key_label.grid_forget()
+                key_entry.grid_forget()
+                rsa_key_label.grid_forget()
+                rsa_key_entry.grid_forget()
+                rsa_key_button.grid_forget()
+                rsa_generate_button.grid_forget()
+            elif cipher_type == "Vernam":
+                key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
+                key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
+                shift_label.grid_forget()
+                shift_entry.grid_forget()
+                rsa_key_label.grid_forget()
+                rsa_key_entry.grid_forget()
+                rsa_key_button.grid_forget()
+                rsa_generate_button.grid_forget()
+            elif cipher_type == "Base64":
+                shift_label.grid_forget()
+                shift_entry.grid_forget()
+                key_label.grid_forget()
+                key_entry.grid_forget()
+                rsa_key_label.grid_forget()
+                rsa_key_entry.grid_forget()
+                rsa_key_button.grid_forget()
+                rsa_generate_button.grid_forget()
+            elif cipher_type == "RSA":
+                rsa_key_entry.delete(0, tk.END)
+                rsa_key_label.config(text="RSA Public Key File:" if operation == "Encrypt" else "RSA Private Key File:")
+                rsa_key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
+                rsa_key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
+                rsa_key_button.grid(row=4, column=1, padx=10, pady=5, sticky=tk.W)
+                rsa_generate_button.grid(row=5, column=1, padx=10, pady=5, sticky=tk.W)
+                shift_label.grid_forget()
+                shift_entry.grid_forget()
+                key_label.grid_forget()
+                key_entry.grid_forget()
+            local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get())
+
+        cipher_var.trace("w", update_fields)
+        operation_var.trace("w", update_fields)
+        plaintext_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get()))
+        key_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get()))
+        rsa_key_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), rsa_key_entry.get(), shift_entry.get()))
+
+        update_fields()
+
+        freq_analysis_button = ttk.Button(main_frame, text="Frequency Analysis", command=lambda: self.freq_analysis_callback(plaintext_entry.get("1.0", tk.END).strip()))
+        freq_analysis_button.grid(row=7, column=0, padx=10, pady=5, sticky=tk.W)
+
+        encryption_info_button = ttk.Button(main_frame, text="Encryption Info", command=self.show_encryption_info)
+        encryption_info_button.grid(row=7, column=1, padx=10, pady=5, sticky=tk.W)
+
+        logging.debug("GUI initialized")
+
+    def browse_file(self, entry):
+        file_path = filedialog.askopenfilename(filetypes=[("PEM files", "*.pem"), ("All files", "*.*")])
+        if file_path:
+            entry.delete(0, tk.END)
+            entry.insert(0, file_path)
+        logging.debug(f"File selected: {file_path}")
+
+    def generate_rsa_key(self):
         logging.debug("Generating RSA key")
         key = RSA.generate(2048)
         private_key = key.export_key()
@@ -69,104 +153,14 @@ def create_gui(submit_callback, freq_analysis_callback, encryption_info_callback
         messagebox.showinfo("RSA Key Generation", "RSA keys generated and saved as 'private_key.pem' and 'public_key.pem'.")
         logging.debug("RSA keys generated and saved")
 
-    rsa_generate_button = ttk.Button(main_frame, text="Generate Key", command=generate_rsa_key)  # Button to generate RSA key
-
-    # Result Text Box
-    result_label = tk.Text(main_frame, wrap=tk.WORD, height=4, state='disabled')  # Text widget for result (disabled)
-    result_label.grid(row=6, column=0, columnspan=2, padx=10, pady=5, sticky="nsew")  # Grid layout for result text widget
-
-    # Local callback function to update the result
-    def local_submit_callback(operation, cipher_type, plaintext, key, shift):
-        logging.debug(f"Local submit callback: Operation: {operation}, Cipher: {cipher_type}, Plaintext: {plaintext}, Key: {key}, Shift: {shift}")
-        result = submit_callback(operation, cipher_type, plaintext, rsa_key_entry.get(), shift)  # Call the submit callback
-        result_label.config(state='normal')  # Make the result text widget editable
-        result_label.delete(1.0, tk.END)  # Clear the result text widget
-        result_label.insert(tk.END, result)  # Insert the result
-        result_label.config(state='disabled')  # Make the result text widget readonly again
-        logging.debug(f"Result updated: {result}")
-
-    # Function to update fields based on selected cipher and operation
-    def update_fields(*args):
-        cipher_type = cipher_var.get()  # Get the selected cipher
-        operation = operation_var.get()  # Get the selected operation
-        logging.debug(f"Updating fields: Cipher: {cipher_type}, Operation: {operation}")
-        if cipher_type == "Caesar":
-            shift_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)  # Show shift entry for Caesar
-            shift_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)  # Show shift entry for Caesar
-            key_label.grid_forget()  # Hide key entry
-            key_entry.grid_forget()  # Hide key entry
-            rsa_key_label.grid_forget()  # Hide RSA key file entry
-            rsa_key_entry.grid_forget()  # Hide RSA key file entry
-            rsa_key_button.grid_forget()  # Hide RSA key file button
-            rsa_generate_button.grid_forget()  # Hide RSA key generate button
-        elif cipher_type == "Vernam":
-            key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)  # Show key entry for Vernam
-            key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)  # Show key entry for Vernam
-            shift_label.grid_forget()  # Hide shift entry
-            shift_entry.grid_forget()  # Hide shift entry
-            rsa_key_label.grid_forget()  # Hide RSA key file entry
-            rsa_key_entry.grid_forget()  # Hide RSA key file entry
-            rsa_key_button.grid_forget()  # Hide RSA key file button
-            rsa_generate_button.grid_forget()  # Hide RSA key generate button
-        elif cipher_type == "Base64":
-            shift_label.grid_forget()  # Hide shift entry
-            shift_entry.grid_forget()  # Hide shift entry
-            key_label.grid_forget()  # Hide key entry
-            key_entry.grid_forget()  # Hide key entry
-            rsa_key_label.grid_forget()  # Hide RSA key file entry
-            rsa_key_entry.grid_forget()  # Hide RSA key file entry
-            rsa_key_button.grid_forget()  # Hide RSA key file button
-            rsa_generate_button.grid_forget()  # Hide RSA key generate button
-        elif cipher_type == "RSA":
-            rsa_key_entry.delete(0, tk.END)  # Clear RSA key file entry
-            if operation == "Encrypt":
-                rsa_key_label.config(text="RSA Public Key File:")  # Update label text for public key
-            else:
-                rsa_key_label.config(text="RSA Private Key File:")  # Update label text for private key
-            rsa_key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)  # Show RSA key file entry
-            rsa_key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)  # Show RSA key file entry
-            rsa_key_button.grid(row=4, column=1, padx=10, pady=5, sticky=tk.W)  # Show RSA key file button
-            rsa_generate_button.grid(row=5, column=1, padx=10, pady=5, sticky=tk.W)  # Show RSA key generate button
-            shift_label.grid_forget()  # Hide shift entry
-            shift_entry.grid_forget()  # Hide shift entry
-            key_label.grid_forget()  # Hide key entry
-            key_entry.grid_forget()  # Hide key entry
-        # Trigger callback with current values
-        local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), rsa_key_entry.get(), shift_entry.get())
-
-    # Function to browse for RSA key file
-    def browse_file(entry):
-        file_path = filedialog.askopenfilename(filetypes=[("PEM files", "*.pem"), ("All files", "*.*")])
-        if file_path:
-            entry.delete(0, tk.END)
-            entry.insert(0, file_path)
-        logging.debug(f"File selected: {file_path}")
-
-    # Trace changes in cipher and operation selection
-    cipher_var.trace("w", update_fields)  # Update fields when cipher changes
-    operation_var.trace("w", update_fields)  # Update fields when operation changes
-    plaintext_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), rsa_key_entry.get(), shift_entry.get()))  # Update result on plaintext change
-    rsa_key_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), rsa_key_entry.get(), shift_entry.get()))  # Update result on RSA key change
-
-    update_fields()  # Initialize the fields based on the default cipher
-
-    # Frequency Analysis Button
-    freq_analysis_button = ttk.Button(main_frame, text="Frequency Analysis", command=lambda: freq_analysis_callback(plaintext_entry.get("1.0", tk.END).strip()))  # Button for frequency analysis
-    freq_analysis_button.grid(row=7, column=0, padx=10, pady=5, sticky=tk.W)  # Grid layout for button
-
-    # Function to show encryption info
-    def show_encryption_info():
+    def show_encryption_info(self):
         logging.debug("Encryption info button clicked")
-        info_text = encryption_info_callback()
-        info_window = tk.Toplevel(root)
+        info_text = self.encryption_info_callback()
+        info_window = tk.Toplevel(self.root)
         info_window.title("Encryption Info")
         info_window.geometry("400x300")
         info_label = ttk.Label(info_window, text=info_text, justify=tk.LEFT)
         info_label.pack(padx=10, pady=10)
 
-    # Encryption Info Button
-    encryption_info_button = ttk.Button(main_frame, text="Encryption Info", command=show_encryption_info)
-    encryption_info_button.grid(row=7, column=1, padx=10, pady=5, sticky=tk.W)  # Grid layout for button
-
-    logging.debug("GUI initialized")
-    return root, result_label  # Return the root window and result label
+    def run(self):
+        self.root.mainloop()
