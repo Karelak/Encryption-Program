@@ -1,4 +1,10 @@
 import base64
+import logging
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CaesarCypher:
     def __init__(self, shift, input):
@@ -65,3 +71,31 @@ class Base64Cypher:
     # Method to decrypt the input using Base64 Cipher
     def Decrypt(self):
         return base64.b64decode(self.input.encode()).decode()  # Base64 decode the input
+
+class RSACypher:
+    def __init__(self, key, input):
+        self.key = key  # Key for RSA Cipher
+        self.input = input  # Input text to be encrypted/decrypted
+        logging.debug(f"RSACypher initialized with key: {key} and input: {input}")
+
+    def Encrypt(self):
+        try:
+            public_key = RSA.import_key(self.key)
+            cipher = PKCS1_OAEP.new(public_key)
+            encrypted_data = cipher.encrypt(self.input.encode())
+            logging.debug(f"Encrypted data: {encrypted_data.hex()}")
+            return encrypted_data.hex()
+        except (ValueError, TypeError) as e:
+            logging.error(f"Encryption error: {str(e)}")
+            return f"Encryption error: {str(e)}"
+
+    def Decrypt(self):
+        try:
+            private_key = RSA.import_key(self.key)
+            cipher = PKCS1_OAEP.new(private_key)
+            decrypted_data = cipher.decrypt(bytes.fromhex(self.input))
+            logging.debug(f"Decrypted data: {decrypted_data.decode()}")
+            return decrypted_data.decode()
+        except (ValueError, TypeError) as e:
+            logging.error(f"Decryption error: {str(e)}")
+            return f"Decryption error: {str(e)}"
