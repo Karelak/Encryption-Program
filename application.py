@@ -4,7 +4,10 @@ from tkinter import ttk, filedialog, messagebox
 from Crypto.PublicKey import RSA
 
 class Application:
+    """Class to create and manage the GUI for the Encryption Program."""
+    
     def __init__(self, submit_callback, freq_analysis_callback, encryption_info_callback):
+        """Initialize with callback functions and setup the GUI."""
         self.submit_callback = submit_callback
         self.freq_analysis_callback = freq_analysis_callback
         self.encryption_info_callback = encryption_info_callback
@@ -14,9 +17,11 @@ class Application:
         self.create_gui()
 
     def setup_logging(self):
+        """Setup the logging configuration."""
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     def create_gui(self):
+        """Create and layout the GUI components."""
         logging.info("Initializing GUI")
         self.root.title('Encryption Program')
         self.root.geometry("600x400")
@@ -29,39 +34,47 @@ class Application:
         main_frame.grid_rowconfigure(2, weight=1)
         main_frame.grid_columnconfigure(1, weight=1)
 
+        # Operation Selection
         operation_var = tk.StringVar(value="Encrypt")
         operation_label = ttk.Label(main_frame, text="Select Operation:")
         operation_menu = ttk.Combobox(main_frame, textvariable=operation_var, values=["Encrypt", "Decrypt"])
         operation_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
         operation_menu.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)
 
+        # Cipher Selection
         cipher_var = tk.StringVar(value="Caesar")
         cipher_label = ttk.Label(main_frame, text="Select Cipher:")
         cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam", "Base64", "RSA"])
         cipher_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
         cipher_menu.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
 
+        # Plaintext Entry
         plaintext_label = ttk.Label(main_frame, text="Plaintext:")
         plaintext_entry = tk.Text(main_frame, wrap=tk.WORD, height=4)
         plaintext_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
         plaintext_entry.grid(row=2, column=1, padx=10, pady=5, sticky="nsew")
 
+        # Key and Shift Entries
         key_label = ttk.Label(main_frame, text="Key (for Vernam):")
         key_entry = ttk.Entry(main_frame)
 
         shift_label = ttk.Label(main_frame, text="Shift (for Caesar):")
         shift_entry = ttk.Entry(main_frame)
 
+        # RSA Key File Selection
         rsa_key_label = ttk.Label(main_frame, text="RSA Key File:")
         rsa_key_entry = ttk.Entry(main_frame)
         rsa_key_button = ttk.Button(main_frame, text="Browse", command=lambda: self.browse_file(rsa_key_entry))
 
+        # RSA Key Generation Button
         rsa_generate_button = ttk.Button(main_frame, text="Generate Key", command=self.generate_rsa_key)
 
+        # Result Display
         self.result_label = tk.Text(main_frame, wrap=tk.WORD, height=4, state='disabled')
         self.result_label.grid(row=6, column=0, columnspan=2, padx=10, pady=5, sticky="nsew")
 
         def local_submit_callback(operation: str, cipher_type: str, plaintext: str, key: str, shift: str):
+            """Local callback to handle submit actions and update the result label."""
             if cipher_type == "Vernam" and not key:
                 result = "Key cannot be empty for Vernam Cipher"
                 logging.error(result)
@@ -75,6 +88,7 @@ class Application:
             logging.info(f"Result updated: {result}")
 
         def update_fields(*args):
+            """Update the input fields based on the selected cipher and operation."""
             cipher_type = cipher_var.get()
             operation = operation_var.get()
             logging.info(f"Updating fields for {cipher_type} Cipher and {operation} operation")
@@ -118,6 +132,7 @@ class Application:
                 key_entry.grid_forget()
             local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get())
 
+        # Trace variable changes to update GUI dynamically
         cipher_var.trace("w", update_fields)
         operation_var.trace("w", update_fields)
         plaintext_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get()))
@@ -126,15 +141,18 @@ class Application:
 
         update_fields()
 
+        # Frequency Analysis Button
         freq_analysis_button = ttk.Button(main_frame, text="Frequency Analysis", command=lambda: self.freq_analysis_callback(plaintext_entry.get("1.0", tk.END).strip()))
         freq_analysis_button.grid(row=7, column=0, padx=10, pady=5, sticky=tk.W)
 
+        # Encryption Info Button
         encryption_info_button = ttk.Button(main_frame, text="Encryption Info", command=self.show_encryption_info)
         encryption_info_button.grid(row=7, column=1, padx=10, pady=5, sticky=tk.W)
 
         logging.info("GUI initialized")
 
     def browse_file(self, entry: ttk.Entry):
+        """Open a file dialog to select a key file and update the entry widget."""
         file_path = filedialog.askopenfilename(filetypes=[("PEM files", "*.pem"), ("All files", "*.*")])
         if file_path:
             entry.delete(0, tk.END)
@@ -142,6 +160,7 @@ class Application:
         logging.info(f"File selected: {file_path}")
 
     def generate_rsa_key(self):
+        """Generate RSA public and private keys and save them to files."""
         logging.info("Generating RSA key")
         key = RSA.generate(2048)
         private_key = key.export_key()
@@ -149,11 +168,12 @@ class Application:
         with open("private_key.pem", "wb") as priv_file:
             priv_file.write(private_key)
         with open("public_key.pem", "wb") as pub_file:
-            pub_file.write(public_key)
+            priv_file.write(public_key)
         messagebox.showinfo("RSA Key Generation", "RSA keys generated and saved as 'private_key.pem' and 'public_key.pem'.")
         logging.info("RSA keys generated and saved")
 
     def show_encryption_info(self):
+        """Display information about symmetric and asymmetric encryption in a new window."""
         logging.info("Encryption info button clicked")
         info_text = self.encryption_info_callback()
         info_window = tk.Toplevel(self.root)
@@ -163,5 +183,6 @@ class Application:
         info_label.pack(padx=10, pady=10)
 
     def run(self):
+        """Start the GUI event loop."""
         logging.info("Running application")
         self.root.mainloop()

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from collections import Counter
 
 def frequency_analysis(text: str):
+    """Perform frequency analysis on the given text and display a bar graph."""
     counter = Counter(text)
     characters = list(counter.keys())
     frequencies = list(counter.values())

@@ -6,11 +6,15 @@ from Crypto.Cipher import PKCS1_OAEP
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CaesarCypher:
+    """Class to handle Caesar cipher encryption and decryption."""
+    
     def __init__(self, shift: int, input: str):
+        """Initialize with a shift value and input text."""
         self.shift = shift
         self.input = input
 
     def Encrypt(self) -> str:
+        """Encrypt the input text using Caesar cipher."""
         encrypted_data = ''
         for char in self.input:
             if char.isalpha():
@@ -24,6 +28,7 @@ class CaesarCypher:
         return encrypted_data
 
     def Decrypt(self) -> str:
+        """Decrypt the input text using Caesar cipher."""
         decrypted_data = ''
         for char in self.input:
             if char.isalpha():
@@ -37,11 +42,15 @@ class CaesarCypher:
         return decrypted_data
 
 class VernamCypher:
+    """Class to handle Vernam cipher encryption and decryption."""
+    
     def __init__(self, key: str, input: str):
+        """Initialize with a key and input text."""
         self.key = key
         self.input = input
 
     def Encrypt(self) -> str:
+        """Encrypt the input text using Vernam cipher."""
         if len(self.key) == 0:
             logging.error("Key cannot be empty for Vernam Cipher")
             return "Key cannot be empty"
@@ -52,6 +61,7 @@ class VernamCypher:
         return encrypted_data
 
     def Decrypt(self) -> str:
+        """Decrypt the input text using Vernam cipher."""
         if len(self.key) == 0:
             logging.error("Key cannot be empty for Vernam Cipher")
             return "Key cannot be empty"
@@ -62,26 +72,35 @@ class VernamCypher:
         return decrypted_data
 
 class Base64Cypher:
+    """Class to handle Base64 encoding and decoding."""
+    
     def __init__(self, input: str):
+        """Initialize with input text."""
         self.input = input
     
     def Encrypt(self) -> str:
+        """Encode the input text using Base64."""
         result = base64.b64encode(self.input.encode()).decode()
         logging.info(f"Base64 Cipher Encrypt result: {result}")
         return result
     
     def Decrypt(self) -> str:
+        """Decode the input text from Base64."""
         result = base64.b64decode(self.input.encode()).decode()
         logging.info(f"Base64 Cipher Decrypt result: {result}")
         return result
 
 class RSACypher:
+    """Class to handle RSA encryption and decryption."""
+    
     def __init__(self, key: str, input: str):
+        """Initialize with a key and input text."""
         self.key = key
         self.input = input
         logging.debug(f"RSACypher initialized with key: {key} and input: {input}")
 
     def Encrypt(self) -> str:
+        """Encrypt the input text using RSA."""
         try:
             public_key = RSA.import_key(self.key)
             cipher = PKCS1_OAEP.new(public_key)
@@ -94,6 +113,7 @@ class RSACypher:
             return f"Encryption error: {str(e)}"
 
     def Decrypt(self) -> str:
+        """Decrypt the input text using RSA."""
         try:
             private_key = RSA.import_key(self.key)
             cipher = PKCS1_OAEP.new(private_key)
