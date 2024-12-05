@@ -46,28 +46,24 @@ class VernamCypher:
     
     def __init__(self, key: str, input: str):
         """Initialize with a key and input text."""
+        if not key:
+            raise ValueError("Key cannot be empty for Vernam Cipher")
+        if len(key) != len(input):
+            raise ValueError("Key length must match input length for Vernam Cipher")
+        
         self.key = key
         self.input = input
+        logging.debug(f"VernamCypher initialized with key: {key} and input: {input}")
 
     def Encrypt(self) -> str:
         """Encrypt the input text using Vernam cipher."""
-        if len(self.key) == 0:
-            logging.error("Key cannot be empty for Vernam Cipher")
-            return "Key cannot be empty"
-        encrypted_data = ''
-        for i in range(len(self.input)):
-            encrypted_data += chr(ord(self.input[i]) ^ ord(self.key[i % len(self.key)]))
+        encrypted_data = ''.join(chr(ord(self.input[i]) ^ ord(self.key[i])) for i in range(len(self.input)))
         logging.info(f"Vernam Cipher Encrypt result: {encrypted_data}")
         return encrypted_data
 
     def Decrypt(self) -> str:
         """Decrypt the input text using Vernam cipher."""
-        if len(self.key) == 0:
-            logging.error("Key cannot be empty for Vernam Cipher")
-            return "Key cannot be empty"
-        decrypted_data = ''
-        for i in range(len(self.input)):
-            decrypted_data += chr(ord(self.input[i]) ^ ord(self.key[i % len(self.key)]))
+        decrypted_data = ''.join(chr(ord(self.input[i]) ^ ord(self.key[i])) for i in range(len(self.input)))
         logging.info(f"Vernam Cipher Decrypt result: {decrypted_data}")
         return decrypted_data
 
