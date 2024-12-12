@@ -104,7 +104,7 @@ class Application:
         update_fields()
 
         # Frequency Analysis Button
-        freq_analysis_button = ttk.Button(main_frame, text="Frequency Analysis", command=lambda: self.freq_analysis_callback(plaintext_entry.get("1.0", tk.END).strip()))
+        freq_analysis_button = ttk.Button(main_frame, text="Frequency Analysis", command=lambda: self.freq_analysis_callback(plaintext_entry.get("1.0", tk.END).strip(), self.result_label.get("1.0", tk.END).strip()))
         freq_analysis_button.grid(row=7, column=0, padx=10, pady=5, sticky=tk.W)
 
         # Encryption Info Button

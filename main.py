@@ -1,5 +1,5 @@
 import logging
-from encryptionclasses import CaesarCypher, VernamCypher
+from encryptionclasses import CaesarCypher, VernamCypher, VigenereCipher
 from application import Application
 from frequency_analysis import frequency_analysis
 
@@ -27,6 +27,8 @@ class EncryptionProgram:
                 return self.handle_caesar(operation, plaintext, shift)
             elif cipher_type == "Vernam":
                 return self.handle_vernam(operation, plaintext, key)
+            elif cipher_type == "Vigenere":
+                return self.handle_vigenere(operation, plaintext, key)
             else:
                 logging.error("Unsupported cipher type")
                 return "Unsupported cipher type"
@@ -55,11 +57,12 @@ class EncryptionProgram:
         result = vernam.Encrypt() if operation == "Encrypt" else vernam.Decrypt()
         logging.info(f"Vernam Cipher {operation} result: {result}")
         return result
+    
 
-    def freq_analysis_callback(self, text: str):
-        """Callback to perform frequency analysis on the provided text."""
-        logging.info(f"Performing frequency analysis for text of length {len(text)}")
-        frequency_analysis(text)
+    def freq_analysis_callback(self, input_text: str, output_text: str):
+        """Callback to perform frequency analysis on the provided input and output texts."""
+        logging.info(f"Performing frequency analysis for input text of length {len(input_text)} and output text of length {len(output_text)}")
+        frequency_analysis(input_text, output_text)
 
     def encryption_info_callback(self) -> str:
         """Provide information about symmetric and asymmetric encryption."""

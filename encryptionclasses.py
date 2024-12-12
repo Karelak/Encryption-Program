@@ -63,3 +63,46 @@ class VernamCypher:
         decrypted_data = ''.join(chr(ord(self.input[i]) ^ ord(self.key[i])) for i in range(len(self.input)))
         logging.info(f"Vernam Cipher Decrypt result: {decrypted_data}")
         return decrypted_data
+
+
+class VigenereCipher:
+    """Class to handle Vigenere cipher encryption and decryption."""
+    
+    def __init__(self, key: str):
+        """Initialize with a key."""
+        self.key = key.upper()
+
+    def _format_text(self, text: str) -> str:
+        """Format the text by removing non-alphabetic characters and converting to uppercase."""
+        return ''.join(filter(str.isalpha, text)).upper()
+
+    def _shift_character(self, char: str, key_char: str, encrypt: bool = True) -> str:
+        """Shift a character by the key character amount, either encrypting or decrypting."""
+        shift = ord(key_char) - ord('A')
+        if not encrypt:
+            shift = -shift
+        return chr((ord(char) - ord('A') + shift) % 26 + ord('A'))
+
+    def encrypt(self, plaintext: str) -> str:
+        """Encrypt the plaintext using Vigenere cipher."""
+        formatted_text = self._format_text(plaintext)
+        ciphertext = []
+        key_length = len(self.key)
+        
+        for i, char in enumerate(formatted_text):
+            key_char = self.key[i % key_length]
+            ciphertext.append(self._shift_character(char, key_char, encrypt=True))
+        
+        return ''.join(ciphertext)
+
+    def decrypt(self, ciphertext: str) -> str:
+        """Decrypt the ciphertext using Vigenere cipher."""
+        formatted_text = self._format_text(ciphertext)
+        plaintext = []
+        key_length = len(self.key)
+        
+        for i, char in enumerate(formatted_text):
+            key_char = self.key[i % key_length]
+            plaintext.append(self._shift_character(char, key_char, encrypt=False))
+        
+        return ''.join(plaintext)
