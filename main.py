@@ -1,5 +1,5 @@
 import logging
-from encryptionclasses import CaesarCypher, VernamCypher, Base64Cypher, RSACypher
+from encryptionclasses import CaesarCypher, VernamCypher
 from application import Application
 from frequency_analysis import frequency_analysis
 
@@ -27,10 +27,6 @@ class EncryptionProgram:
                 return self.handle_caesar(operation, plaintext, shift)
             elif cipher_type == "Vernam":
                 return self.handle_vernam(operation, plaintext, key)
-            elif cipher_type == "Base64":
-                return self.handle_base64(operation, plaintext)
-            elif cipher_type == "RSA":
-                return self.handle_rsa(operation, plaintext, key)
             else:
                 logging.error("Unsupported cipher type")
                 return "Unsupported cipher type"
@@ -60,29 +56,6 @@ class EncryptionProgram:
         logging.info(f"Vernam Cipher {operation} result: {result}")
         return result
 
-    def handle_base64(self, operation: str, plaintext: str) -> str:
-        """Handle Base64 encoding/decoding."""
-        base64 = Base64Cypher(plaintext)
-        result = base64.Encrypt() if operation == "Encrypt" else base64.Decrypt()
-        logging.info(f"Base64 Cipher {operation} result: {result}")
-        return result
-
-    def handle_rsa(self, operation: str, plaintext: str, key: str) -> str:
-        """Handle RSA encryption/decryption."""
-        if not key:
-            logging.error("Key cannot be empty for RSA Cipher")
-            return "Key cannot be empty for RSA Cipher"
-        try:
-            with open(key, 'r') as key_file:
-                key_content = key_file.read()
-            rsa = RSACypher(key_content, plaintext)
-            result = rsa.Encrypt() if operation == "Encrypt" else rsa.Decrypt()
-            logging.info(f"RSA Cipher {operation} result: {result}")
-            return result
-        except (ValueError, TypeError, FileNotFoundError) as e:
-            logging.error(f"RSA key format error: {str(e)}")
-            return f"RSA key format error: {str(e)}"
-
     def freq_analysis_callback(self, text: str):
         """Callback to perform frequency analysis on the provided text."""
         logging.info(f"Performing frequency analysis for text of length {len(text)}")
@@ -94,11 +67,10 @@ class EncryptionProgram:
         info_text = """
         Symmetric Encryption:
         - Uses the same key for both encryption and decryption.
-        - Examples: Caesar Cipher, Vernam Cipher, Base64 Cipher.
+        - Examples: Caesar Cipher, Vernam Cipher.
 
         Asymmetric Encryption:
         - Uses a pair of keys (public and private) for encryption and decryption.
-        - Example: RSA.
         """
         return info_text
 

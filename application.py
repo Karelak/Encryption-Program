@@ -1,8 +1,6 @@
 import logging
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-from Cryptodome.PublicKey import RSA
-from Cryptodome.Cipher import PKCS1_OAEP
 
 class Application:
     """Class to create and manage the GUI for the Encryption Program."""
@@ -45,7 +43,7 @@ class Application:
         # Cipher Selection
         cipher_var = tk.StringVar(value="Caesar")
         cipher_label = ttk.Label(main_frame, text="Select Cipher:")
-        cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam", "Base64", "RSA"])
+        cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam"])
         cipher_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
         cipher_menu.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
 
@@ -61,14 +59,6 @@ class Application:
 
         shift_label = ttk.Label(main_frame, text="Shift (for Caesar):")
         shift_entry = ttk.Entry(main_frame)
-
-        # RSA Key File Selection
-        rsa_key_label = ttk.Label(main_frame, text="RSA Key File:")
-        rsa_key_entry = ttk.Entry(main_frame)
-        rsa_key_button = ttk.Button(main_frame, text="Browse", command=lambda: self.browse_file(rsa_key_entry))
-
-        # RSA Key Generation Button
-        rsa_generate_button = ttk.Button(main_frame, text="Generate Key", command=self.generate_rsa_key)
 
         # Result Display
         self.result_label = tk.Text(main_frame, wrap=tk.WORD, height=4, state='disabled')
@@ -98,39 +88,11 @@ class Application:
                 shift_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
                 key_label.grid_forget()
                 key_entry.grid_forget()
-                rsa_key_label.grid_forget()
-                rsa_key_entry.grid_forget()
-                rsa_key_button.grid_forget()
-                rsa_generate_button.grid_forget()
             elif cipher_type == "Vernam":
                 key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
                 key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
                 shift_label.grid_forget()
                 shift_entry.grid_forget()
-                rsa_key_label.grid_forget()
-                rsa_key_entry.grid_forget()
-                rsa_key_button.grid_forget()
-                rsa_generate_button.grid_forget()
-            elif cipher_type == "Base64":
-                shift_label.grid_forget()
-                shift_entry.grid_forget()
-                key_label.grid_forget()
-                key_entry.grid_forget()
-                rsa_key_label.grid_forget()
-                rsa_key_entry.grid_forget()
-                rsa_key_button.grid_forget()
-                rsa_generate_button.grid_forget()
-            elif cipher_type == "RSA":
-                rsa_key_entry.delete(0, tk.END)
-                rsa_key_label.config(text="RSA Public Key File:" if operation == "Encrypt" else "RSA Private Key File:")
-                rsa_key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
-                rsa_key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
-                rsa_key_button.grid(row=4, column=1, padx=10, pady=5, sticky=tk.W)
-                rsa_generate_button.grid(row=5, column=1, padx=10, pady=5, sticky=tk.W)
-                shift_label.grid_forget()
-                shift_entry.grid_forget()
-                key_label.grid_forget()
-                key_entry.grid_forget()
             local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get())
 
         # Trace variable changes to update GUI dynamically
@@ -138,7 +100,6 @@ class Application:
         operation_var.trace("w", update_fields)
         plaintext_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get()))
         key_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), key_entry.get(), shift_entry.get()))
-        rsa_key_entry.bind("<KeyRelease>", lambda event: local_submit_callback(operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(), rsa_key_entry.get(), shift_entry.get()))
 
         update_fields()
 
@@ -159,19 +120,6 @@ class Application:
             entry.delete(0, tk.END)
             entry.insert(0, file_path)
         logging.info(f"File selected: {file_path}")
-
-    def generate_rsa_key(self):
-        """Generate RSA public and private keys and save them to files."""
-        logging.info("Generating RSA key")
-        key = RSA.generate(2048)
-        private_key = key.export_key()
-        public_key = key.publickey().export_key()
-        with open("private_key.pem", "wb") as priv_file:
-            priv_file.write(private_key)
-        with open("public_key.pem", "wb") as pub_file:
-            priv_file.write(public_key)
-        messagebox.showinfo("RSA Key Generation", "RSA keys generated and saved as 'private_key.pem' and 'public_key.pem'.")
-        logging.info("RSA keys generated and saved")
 
     def show_encryption_info(self):
         """Display information about symmetric and asymmetric encryption in a new window."""
