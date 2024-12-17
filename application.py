@@ -94,12 +94,12 @@ class Application:
 
         # Key and Shift Entries
         key_label = ttk.Label(main_frame, text="Key (for Vernam):")
-        key_entry = ttk.Entry(main_frame)
+        key_entry = tk.Entry(main_frame)  # Changed from ttk.Entry to tk.Entry
         key_error_label = ttk.Label(main_frame, text="", foreground="red")
         Tooltip(key_entry, text="Enter the key for Vernam or Vigenere cipher.")
 
         shift_label = ttk.Label(main_frame, text="Shift (for Caesar):")
-        shift_entry = ttk.Entry(main_frame)
+        shift_entry = tk.Entry(main_frame)  # Changed from ttk.Entry to tk.Entry
         shift_error_label = ttk.Label(main_frame, text="", foreground="red")
         Tooltip(shift_entry, text="Enter the shift value for Caesar cipher.")
 
@@ -153,7 +153,7 @@ class Application:
         submit_button = ttk.Button(main_frame, text="Submit", command=lambda: local_submit_callback(
             operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(),
             key_entry.get(), shift_entry.get()))
-        submit_button.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
+        submit_button.grid(row=7, column=0, padx=10, pady=5, sticky=tk.W)  # Removed columnspan=2
 
         # Function to validate inputs and enable/disable the submit button
         def validate_inputs(*args):
@@ -234,11 +234,11 @@ class Application:
 
         # Frequency Analysis Button
         freq_analysis_button = ttk.Button(main_frame, text="Frequency Analysis", command=lambda: self.freq_analysis_callback(plaintext_entry.get("1.0", tk.END).strip(), self.result_label.get("1.0", tk.END).strip()))
-        freq_analysis_button.grid(row=7, column=0, padx=10, pady=5, sticky=tk.W)
+        freq_analysis_button.grid(row=7, column=1, padx=10, pady=5, sticky=tk.W)
 
         # Encryption Info Button
         encryption_info_button = ttk.Button(main_frame, text="Encryption Info", command=self.show_encryption_info)
-        encryption_info_button.grid(row=7, column=1, padx=10, pady=5, sticky=tk.W)
+        encryption_info_button.grid(row=7, column=2, padx=10, pady=5, sticky=tk.W)
 
     def browse_file(self, entry: ttk.Entry):
         """Open a file dialog to select a key file and update the entry widget."""
