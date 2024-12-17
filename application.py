@@ -73,6 +73,7 @@ class Application:
         operation_menu = ttk.Combobox(main_frame, textvariable=operation_var, values=["Encrypt", "Decrypt"])
         operation_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
         operation_menu.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)
+        Tooltip(operation_menu, text="Select whether to Encrypt or Decrypt the text.")
 
         # Cipher Selection
         cipher_var = tk.StringVar(value="Caesar")
@@ -80,22 +81,27 @@ class Application:
         cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam", "Vigenere"])
         cipher_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
         cipher_menu.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
+        Tooltip(cipher_menu, text="Select the cipher algorithm to use.")
 
         # Plaintext Entry
         plaintext_label = ttk.Label(main_frame, text="Plaintext:")
         plaintext_entry = tk.Text(main_frame, wrap=tk.WORD, height=4)
         plaintext_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
         plaintext_entry.grid(row=2, column=1, padx=10, pady=5, sticky="nsew")
+        plaintext_error_label = ttk.Label(main_frame, text="", foreground="red")
+        plaintext_error_label.grid(row=3, column=1, padx=10, pady=0, sticky=tk.W)
+        Tooltip(plaintext_entry, text="Enter the text to be encrypted or decrypted.")
 
         # Key and Shift Entries
         key_label = ttk.Label(main_frame, text="Key (for Vernam):")
         key_entry = ttk.Entry(main_frame)
-
-        shift_label = ttk.Label(main_frame, text="Key (for Vigenere):")
-        shift_entry = ttk.Entry(main_frame)
+        key_error_label = ttk.Label(main_frame, text="", foreground="red")
+        Tooltip(key_entry, text="Enter the key for Vernam or Vigenere cipher.")
 
         shift_label = ttk.Label(main_frame, text="Shift (for Caesar):")
         shift_entry = ttk.Entry(main_frame)
+        shift_error_label = ttk.Label(main_frame, text="", foreground="red")
+        Tooltip(shift_entry, text="Enter the shift value for Caesar cipher.")
 
         # Result Display
         self.result_label = tk.Text(main_frame, wrap=tk.WORD, height=4, state='disabled')
@@ -118,30 +124,36 @@ class Application:
             cipher_type = cipher_var.get()
             operation = operation_var.get()
             if cipher_type == "Caesar":
-                shift_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
-                shift_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
+                shift_label.grid(row=4, column=0, padx=10, pady=5, sticky=tk.W)
+                shift_entry.grid(row=4, column=1, padx=10, pady=5, sticky=tk.W)
+                shift_error_label.grid(row=5, column=1, padx=10, pady=0, sticky=tk.W)
                 key_label.grid_forget()
                 key_entry.grid_forget()
+                key_error_label.grid_forget()
             elif cipher_type == "Vernam":
-                key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
-                key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
+                key_label.config(text="Key (for Vernam):")
+                key_label.grid(row=4, column=0, padx=10, pady=5, sticky=tk.W)
+                key_entry.grid(row=4, column=1, padx=10, pady=5, sticky=tk.W)
+                key_error_label.grid(row=5, column=1, padx=10, pady=0, sticky=tk.W)
                 shift_label.grid_forget()
                 shift_entry.grid_forget()
+                shift_error_label.grid_forget()
             elif cipher_type == "Vigenere":
                 key_label.config(text="Key (for Vigenere):")
-                key_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
-                key_entry.grid(row=3, column=1, padx=10, pady=5, sticky=tk.W)
+                key_label.grid(row=4, column=0, padx=10, pady=5, sticky=tk.W)
+                key_entry.grid(row=4, column=1, padx=10, pady=5, sticky=tk.W)
+                key_error_label.grid(row=5, column=1, padx=10, pady=0, sticky=tk.W)
                 shift_label.grid_forget()
                 shift_entry.grid_forget()
+                shift_error_label.grid_forget()
+
+            validate_inputs()
 
         # Add a Submit Button
         submit_button = ttk.Button(main_frame, text="Submit", command=lambda: local_submit_callback(
             operation_var.get(), cipher_var.get(), plaintext_entry.get("1.0", tk.END).strip(),
             key_entry.get(), shift_entry.get()))
-        submit_button.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
-
-        # Initialize tooltip for the submit button
-        submit_tooltip = Tooltip(submit_button)
+        submit_button.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
 
         # Function to validate inputs and enable/disable the submit button
         def validate_inputs(*args):
@@ -151,48 +163,74 @@ class Application:
             key = key_entry.get()
             shift = shift_entry.get()
 
-            error_msg = ""
+            is_valid = True
+            plaintext_error = ""
+            key_error = ""
+            shift_error = ""
+
             if not plaintext:
-                error_msg = "Plaintext cannot be empty."
-            elif cipher_type == "Vernam":
+                plaintext_error = "Plaintext cannot be empty."
+                is_valid = False
+                plaintext_entry.config(highlightbackground="red", highlightcolor="red", highlightthickness=1)
+            else:
+                plaintext_entry.config(highlightthickness=0)
+
+            if cipher_type == "Vernam":
                 if not key:
-                    error_msg = "Key cannot be empty for Vernam Cipher."
+                    key_error = "Key cannot be empty."
+                    is_valid = False
+                    key_entry.config(highlightbackground="red", highlightcolor="red", highlightthickness=1)
                 elif len(key) != len(plaintext):
-                    error_msg = "Key length must match plaintext length for Vernam Cipher."
+                    key_error = "Key length must match plaintext length."
+                    is_valid = False
+                    key_entry.config(highlightbackground="red", highlightcolor="red", highlightthickness=1)
+                else:
+                    key_entry.config(highlightthickness=0)
             elif cipher_type == "Vigenere":
                 if not key:
-                    error_msg = "Key cannot be empty for Vigenere Cipher."
+                    key_error = "Key cannot be empty."
+                    is_valid = False
+                    key_entry.config(highlightbackground="red", highlightcolor="red", highlightthickness=1)
+                else:
+                    key_entry.config(highlightthickness=0)
             elif cipher_type == "Caesar":
                 if not shift:
-                    error_msg = "Shift value cannot be empty."
+                    shift_error = "Shift value cannot be empty."
+                    is_valid = False
+                    shift_entry.config(highlightbackground="red", highlightcolor="red", highlightthickness=1)
                 else:
                     try:
                         int(shift)
+                        shift_entry.config(highlightthickness=0)
                     except ValueError:
-                        error_msg = "Shift must be an integer."
+                        shift_error = "Shift must be an integer."
+                        is_valid = False
+                        shift_entry.config(highlightbackground="red", highlightcolor="red", highlightthickness=1)
 
-            if error_msg:
-                submit_button.state(['disabled'])
-                submit_tooltip.update_text(error_msg)
-            else:
+            # Update error labels
+            plaintext_error_label.config(text=plaintext_error)
+            key_error_label.config(text=key_error)
+            shift_error_label.config(text=shift_error)
+
+            if is_valid:
                 submit_button.state(['!disabled'])
-                submit_tooltip.update_text("")
+            else:
+                submit_button.state(['disabled'])
 
         # Bind validation to input fields
         plaintext_entry.bind("<KeyRelease>", validate_inputs)
         key_entry.bind("<KeyRelease>", validate_inputs)
         shift_entry.bind("<KeyRelease>", validate_inputs)
-        cipher_var.trace("w", validate_inputs)
-        operation_var.trace("w", validate_inputs)
-
-        # Call validate_inputs initially to set the correct state of the submit button
-        validate_inputs()
+        cipher_var.trace_add("write", validate_inputs)
+        operation_var.trace_add("write", validate_inputs)
 
         # Trace variable changes to update GUI dynamically
-        cipher_var.trace("w", update_fields)
-        operation_var.trace("w", update_fields)
+        cipher_var.trace_add("write", update_fields)
+        operation_var.trace_add("write", update_fields)
 
+        # Initial setup
         update_fields()
+        validate_inputs()
 
         # Frequency Analysis Button
         freq_analysis_button = ttk.Button(main_frame, text="Frequency Analysis", command=lambda: self.freq_analysis_callback(plaintext_entry.get("1.0", tk.END).strip(), self.result_label.get("1.0", tk.END).strip()))

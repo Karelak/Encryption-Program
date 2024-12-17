@@ -3,15 +3,15 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CaesarCypher:
-    """Class to handle Caesar cipher encryption and decryption."""
+    # Class to handle Caesar cipher encryption and decryption.
     
     def __init__(self, shift: int, input: str):
-        """Initialize with a shift value and input text."""
+        # Initialize with a shift value and input text.
         self.shift = shift
         self.input = input
 
     def Encrypt(self) -> str:
-        """Encrypt the input text using Caesar cipher."""
+        # Encrypt the input text using Caesar cipher.
         encrypted_data = ''
         for char in self.input:
             if char.isalpha():
@@ -24,7 +24,7 @@ class CaesarCypher:
         return encrypted_data
 
     def Decrypt(self) -> str:
-        """Decrypt the input text using Caesar cipher."""
+        # Decrypt the input text using Caesar cipher.
         decrypted_data = ''
         for char in self.input:
             if char.isalpha():
@@ -37,10 +37,10 @@ class CaesarCypher:
         return decrypted_data
 
 class VernamCypher:
-    """Class to handle Vernam cipher encryption and decryption."""
+    # Class to handle Vernam cipher encryption and decryption.
     
     def __init__(self, key: str, input: str):
-        """Initialize with a key and input text."""
+        # Initialize with a key and input text.
         if not key:
             raise ValueError("Key cannot be empty for Vernam Cipher")
         if len(key) != len(input):
@@ -51,26 +51,26 @@ class VernamCypher:
         logging.debug(f"VernamCypher initialized with key: {key} and input: {input}")
 
     def Encrypt(self) -> str:
-        """Encrypt the input text using Vernam cipher."""
+        # Encrypt the input text using Vernam cipher.
         encrypted_data = ''.join(chr(ord(self.input[i]) ^ ord(self.key[i])) for i in range(len(self.input)))
         return encrypted_data
 
     def Decrypt(self) -> str:
-        """Decrypt the input text using Vernam cipher."""
+        # Decrypt the input text using Vernam cipher.
         decrypted_data = ''.join(chr(ord(self.input[i]) ^ ord(self.key[i])) for i in range(len(self.input)))
         return decrypted_data
 
 
 class VigenereCipher:
-    """Class to handle Vigenere cipher encryption and decryption."""
+    # Class to handle Vigenere cipher encryption and decryption.
     
     def __init__(self, key: str, input_text: str):
-        """Initialize with a key and input text."""
+        # Initialize with a key and input text.
         self.key = key
         self.input = input_text
 
     def encrypt(self) -> str:
-        """Encrypt the input text using Vigenere cipher."""
+        # Encrypt the input text using Vigenere cipher.
         encrypted_data = ''
         key_length = len(self.key)
         key_index = 0
@@ -89,7 +89,7 @@ class VigenereCipher:
         return encrypted_data
 
     def decrypt(self) -> str:
-        """Decrypt the input text using Vigenere cipher."""
+        # Decrypt the input text using Vigenere cipher.
         decrypted_data = ''
         key_length = len(self.key)
         key_index = 0
