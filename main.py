@@ -13,11 +13,10 @@ class EncryptionProgram:
 
     def setup_logging(self):
         """Setup the logging configuration."""
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
     def submit_callback(self, operation: str, cipher_type: str, plaintext: str, key: str, shift: str) -> str:
         """Handle the submission of encryption/decryption requests."""
-        logging.info(f"Operation: {operation}, Cipher: {cipher_type}")
         if not plaintext:
             logging.error("Plaintext cannot be empty")
             return "Plaintext cannot be empty"
@@ -42,7 +41,6 @@ class EncryptionProgram:
             shift = int(shift)
             caesar = CaesarCypher(shift, plaintext)
             result = caesar.Encrypt() if operation == "Encrypt" else caesar.Decrypt()
-            logging.info(f"Caesar Cipher {operation} result: {result}")
             return result
         except ValueError:
             logging.error("Invalid shift value")
@@ -55,18 +53,23 @@ class EncryptionProgram:
             return "Key cannot be empty for Vernam Cipher"
         vernam = VernamCypher(key, plaintext)
         result = vernam.Encrypt() if operation == "Encrypt" else vernam.Decrypt()
-        logging.info(f"Vernam Cipher {operation} result: {result}")
         return result
-    
+
+    def handle_vigenere(self, operation: str, plaintext: str, key: str) -> str:
+        """Handle Vigenere cipher encryption/decryption."""
+        if not key:
+            logging.error("Key cannot be empty for Vigenere Cipher")
+            return "Key cannot be empty for Vigenere Cipher"
+        vigenere = VigenereCipher(key, plaintext)
+        result = vigenere.encrypt() if operation == "Encrypt" else vigenere.decrypt()
+        return result
 
     def freq_analysis_callback(self, input_text: str, output_text: str):
         """Callback to perform frequency analysis on the provided input and output texts."""
-        logging.info(f"Performing frequency analysis for input text of length {len(input_text)} and output text of length {len(output_text)}")
         frequency_analysis(input_text, output_text)
 
     def encryption_info_callback(self) -> str:
         """Provide information about symmetric and asymmetric encryption."""
-        logging.info("Encryption info requested")
         info_text = """
         Symmetric Encryption:
         - Uses the same key for both encryption and decryption.
@@ -79,7 +82,6 @@ class EncryptionProgram:
 
     def run(self):
         """Start the Encryption Program."""
-        logging.info("Starting Encryption Program")
         self.app.run()
 
 if __name__ == "__main__":
