@@ -1,6 +1,6 @@
 import logging
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import ttk, messagebox
 
 class Application:
     """Class to create and manage the GUI for the Encryption Program."""
@@ -199,13 +199,6 @@ class Application:
         # Encryption Info Button
         encryption_info_button = ttk.Button(main_frame, text="Encryption Info", command=self.show_encryption_info)
         encryption_info_button.grid(row=7, column=2, padx=10, pady=5, sticky=tk.W)
-
-    def browse_file(self, entry: ttk.Entry):
-        """Open a file dialog to select a key file and update the entry widget."""
-        file_path = filedialog.askopenfilename(filetypes=[("PEM files", "*.pem"), ("All files", "*.*")])
-        if file_path:
-            entry.delete(0, tk.END)
-            entry.insert(0, file_path)
 
     def show_encryption_info(self):
         """Display information about symmetric and asymmetric encryption in a new window."""
