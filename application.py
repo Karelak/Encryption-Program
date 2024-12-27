@@ -2,42 +2,6 @@ import logging
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
-# Remove the Tooltip class
-# class Tooltip:
-#     """Create a tooltip for a given widget."""
-#     def __init__(self, widget, text=''):
-#         self.widget = widget
-#         self.text = text
-#         self.tooltip_window = None
-#         self.widget.bind("<Enter>", self.enter)
-#         self.widget.bind("<Leave>", self.leave)
-
-#     def update_text(self, text):
-#         """Update the tooltip text and destroy existing tooltip window if any."""
-#         self.text = text
-#         if self.tooltip_window:
-#             self.tooltip_window.destroy()
-#             self.tooltip_window = None
-
-#     def enter(self, _event=None):
-#         if self.tooltip_window or not self.text.strip():
-#             return
-#         x = y = 0
-#         x += self.widget.winfo_rootx() + 20
-#         y += self.widget.winfo_rooty() + 20
-#         self.tooltip_window = tw = tk.Toplevel(self.widget)
-#         tw.wm_overrideredirect(True)
-#         tw.geometry(f"+{x}+{y}")
-#         label = tk.Label(tw, text=self.text, justify='left',
-#                          background="#ffffe0", relief='solid', borderwidth=1,
-#                          font=("tahoma", "8", "normal"))
-#         label.pack(ipadx=1)
-
-#     def leave(self, _event=None):
-#         if self.tooltip_window:
-#             self.tooltip_window.destroy()
-#             self.tooltip_window = None
-
 class Application:
     """Class to create and manage the GUI for the Encryption Program."""
     
@@ -74,8 +38,6 @@ class Application:
         operation_menu = ttk.Combobox(main_frame, textvariable=operation_var, values=["Encrypt", "Decrypt"])
         operation_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
         operation_menu.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)
-        # Remove Tooltip instance
-        # Tooltip(operation_menu, text="Select whether to Encrypt or Decrypt the text.")
 
         # Cipher Selection
         cipher_var = tk.StringVar(value="Caesar")
@@ -83,8 +45,6 @@ class Application:
         cipher_menu = ttk.Combobox(main_frame, textvariable=cipher_var, values=["Caesar", "Vernam", "Vigenere"])
         cipher_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
         cipher_menu.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
-        # Remove Tooltip instance
-        # Tooltip(cipher_menu, text="Select the cipher algorithm to use.")
 
         # Plaintext Entry
         plaintext_label = ttk.Label(main_frame, text="Plaintext:")
@@ -93,21 +53,15 @@ class Application:
         plaintext_entry.grid(row=2, column=1, padx=10, pady=5, sticky="nsew")
         plaintext_error_label = ttk.Label(main_frame, text="", foreground="red")
         plaintext_error_label.grid(row=3, column=1, padx=10, pady=0, sticky=tk.W)
-        # Remove Tooltip instance
-        # Tooltip(plaintext_entry, text="Enter the text to be encrypted or decrypted.")
 
         # Key and Shift Entries
         key_label = ttk.Label(main_frame, text="Key (for Vernam):")
         key_entry = tk.Entry(main_frame)  # Changed from ttk.Entry to tk.Entry
         key_error_label = ttk.Label(main_frame, text="", foreground="red")
-        # Remove Tooltip instance
-        # Tooltip(key_entry, text="Enter the key for Vernam or Vigenere cipher.")
 
         shift_label = ttk.Label(main_frame, text="Shift (for Caesar):")
         shift_entry = tk.Entry(main_frame)  # Changed from ttk.Entry to tk.Entry
         shift_error_label = ttk.Label(main_frame, text="", foreground="red")
-        # Remove Tooltip instance
-        # Tooltip(shift_entry, text="Enter the shift value for Caesar cipher.")
 
         # Result Display
         self.result_label = tk.Text(main_frame, wrap=tk.WORD, height=4, state='disabled')
