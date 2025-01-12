@@ -60,7 +60,6 @@ class VernamCypher:
         decrypted_data = ''.join(chr(ord(self.input[i]) ^ ord(self.key[i])) for i in range(len(self.input)))
         return decrypted_data
 
-
 class VigenereCipher:
     # Class to handle Vigenere cipher encryption and decryption.
     
